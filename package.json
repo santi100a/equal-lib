@@ -1,0 +1,14 @@
+{
+  "name": "@santi100/equal-lib",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "Other",
+  "devDependencies": {
+    "@types/jest": "^29.2.4",
+    "jest": "^29.3.1"
+  },
+  "scripts": {
+    "test": "jest --verbose",
+    "test:watch": "jest --watch --watchAll --verbose"
+  }
+}

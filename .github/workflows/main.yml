@@ -1,0 +1,40 @@
+name: equal-lib CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+          always-auth: true
+
+      - name: Update repo and install git
+        run: |
+          sudo apt-get update -yq
+          sudo apt-get install git python3 -yq
+
+      - name: Set registry
+        run: npm set registry "https://registry.npmjs.org"
+
+      - name: Set auth token
+        run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Run test suites
+        run: yarn test
+
+      - name: Publish to NPM with custom script
+        run: git status --porcelain | grep '^ M' | awk '{print $2}' | sed -n '/\.[d]\.ts$\|\.js$\|\package.json\|tests\/.*/p' | python3 publish.py

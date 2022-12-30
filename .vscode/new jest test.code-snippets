@@ -1,0 +1,28 @@
+{
+	// Place your área de trabajo de equal-lib snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	"new test case": {
+		"scope": "javascript,typescript",
+		"prefix": "test case",
+		"body": [
+			"test('$1', () => {",
+			"\t$0",
+			"});"
+		],
+		"description": "New Jest test"
+	},
+	"expect .toBe": {
+		"scope": "javascript,typescript",
+		"prefix": "expect toBe",
+		"body": [
+			"expect($1)",
+			"\t.toBe($0);"
+		],
+		"description": "New Jest test"
+	}
+}
