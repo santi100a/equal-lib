@@ -15,20 +15,8 @@ jobs:
         with:
           node-version: 16.x
           always-auth: true
-
-      - name: Update repo and install git
-        run: |
-          sudo apt-get update -yq
-          sudo apt-get install git python3 -yq
-
-      - name: Set registry
-        run: npm set registry "https://registry.npmjs.org"
-
-      - name: Set auth token
-        run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
-
-      - name: Install Yarn
-        run: npm install -g yarn
+          registry-url: https://registry.npmjs.org
+          token: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: Install dependencies
         run: yarn
@@ -37,4 +25,4 @@ jobs:
         run: yarn test
 
       - name: Publish to NPM with custom script
-        run: git status --porcelain | grep '^ M' | awk '{print $2}' | sed -n '/\.[d]\.ts$\|\.js$\|\package.json\|tests\/.*/p' | python3 publish.py
+        run: /usr/bin/git status --porcelain | grep '^ M' | awk '{print $2}' | sed -n '/\.[d]\.ts$\|\.js$\|\package.json\|tests\/.*/p' | python3 publish.py
