@@ -14,7 +14,6 @@ function __map<T, R = unknown>(array: T[], fn: (val: T, ind: number) => R) {
  * @param {T[]} array1 First array.
  * @param {T[]} array2 Second array.
  *
- * **Keep in mind it's not suitable for comparing nested arrays or arrays of objects.**
  */
 function arrayEquality<T>(array1: T[], array2: T[]): boolean {
   if (!Array.isArray(array1) || !Array.isArray(array2))
@@ -43,30 +42,38 @@ function arrayEquality<T>(array1: T[], array2: T[]): boolean {
  * @param {A} obj1 First object.
  * @param {B} obj2 Second object.
  *
- * **Keep in mind it's not suitable for comparing nested objects or objects with arrays.**
  */
 function objectEquality<A extends Record<any, any>, B extends Record<any, any>>(
   obj1: A,
   obj2: B
 ): boolean {
-  if (
-    typeof obj1 !== "object" ||
-    typeof obj2 !== "object" ||
-    obj1 === null ||
-    obj2 === null ||
-    obj1 === undefined ||
-    obj2 === undefined
-  )
-    throw new TypeError("Parameters must be objects.");
-  else {
-    const keys1 = Object.keys(obj1);
-    const keys2 = Object.keys(obj2);
-
-    const values1 = Object.values(obj1);
-    const values2 = Object.values(obj2);
-
-    return arrayEquality(keys1, keys2) && arrayEquality(values1, values2);
+    if (typeof obj1 !== "object" ||
+        typeof obj2 !== "object" ||
+        obj1 === null ||
+        obj2 === null ||
+        obj1 === undefined ||
+        obj2 === undefined)
+      throw new TypeError("Parameters must be objects.");
+    else {
+      let keys1 = [];
+      let keys2 = [];
+      let values1 = [];
+      let values2 = [];
+      for (let key in obj1) {
+        if (obj1.hasOwnProperty(key)) {
+          keys1.push(key);
+          values1.push(obj1[key]);
+        }
+      }
+      for (let key in obj2) {
+        if (obj2.hasOwnProperty(key)) {
+          keys2.push(key);
+          values2.push(obj2[key]);
+        }
+      }
+      return arrayEquality(keys1, keys2) && arrayEquality(values1, values2);
   }
 }
+
 
 export { arrayEquality, objectEquality };

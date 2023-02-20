@@ -16,7 +16,6 @@ function __map(array, fn) {
  * @param {T[]} array1 First array.
  * @param {T[]} array2 Second array.
  *
- * **Keep in mind it's not suitable for comparing nested arrays or arrays of objects.**
  */
 function arrayEquality(array1, array2) {
     if (!Array.isArray(array1) || !Array.isArray(array2))
@@ -46,7 +45,6 @@ exports.arrayEquality = arrayEquality;
  * @param {A} obj1 First object.
  * @param {B} obj2 Second object.
  *
- * **Keep in mind it's not suitable for comparing nested objects or objects with arrays.**
  */
 function objectEquality(obj1, obj2) {
     if (typeof obj1 !== "object" ||
@@ -57,10 +55,22 @@ function objectEquality(obj1, obj2) {
         obj2 === undefined)
         throw new TypeError("Parameters must be objects.");
     else {
-        var keys1 = Object.keys(obj1);
-        var keys2 = Object.keys(obj2);
-        var values1 = Object.values(obj1);
-        var values2 = Object.values(obj2);
+        var keys1 = [];
+        var keys2 = [];
+        var values1 = [];
+        var values2 = [];
+        for (var key in obj1) {
+            if (obj1.hasOwnProperty(key)) {
+                keys1.push(key);
+                values1.push(obj1[key]);
+            }
+        }
+        for (var key in obj2) {
+            if (obj2.hasOwnProperty(key)) {
+                keys2.push(key);
+                values2.push(obj2[key]);
+            }
+        }
         return arrayEquality(keys1, keys2) && arrayEquality(values1, values2);
     }
 }
