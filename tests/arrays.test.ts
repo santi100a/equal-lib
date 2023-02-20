@@ -1,4 +1,4 @@
-const arrayEquality = require('../index.js').arrayEquality;
+const arrayEquality = require('../cjs/index.js').arrayEquality;
 
 test('it should be a function', () => {
     expect(typeof arrayEquality)
@@ -23,4 +23,16 @@ test('it should return true in case both arrays are empty', () => {
 test('it should return true in case the arrays are exactly equal', () => {
     expect(arrayEquality([1, 2, 3], [1, 2, 3]))
         .toBe(true);
+});
+test('it should be able to compare nested arrays', () => {
+    expect(arrayEquality([[5, 8, 3], [5, 8, 3]], [[5, 8, 3], [5, 8, 3]]))
+        .toBe(true);
+    expect(arrayEquality([[5, 8, 3], [5, 8, 4]], [[5, 8, 4], [5, 8, 3]]))
+        .toBe(false);
+});
+test('it should be able to compare arrays of objects', () => {
+    expect(arrayEquality([{ hello: 'world' }, { foo: 'bar' }], [{ hello: 'world' }, { foo: 'bar' }]))
+        .toBe(true);
+    expect(arrayEquality([{ bar: 'foo' }, { foo: 'bar' }], [{ hello: 'world' }, { foo: 'bar' }]))
+        .toBe(false);
 });

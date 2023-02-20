@@ -3,17 +3,20 @@ name: equal-lib CI
 on:
   push:
     branches: [ main ]
+    paths:
+      - src/*.*
   pull_request:
     branches: [ main ]
-
+    paths:
+      - src/*.*
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 19.x
           always-auth: true
           registry-url: https://registry.npmjs.org
           token: ${{ secrets.NPM_AUTH_TOKEN }}
@@ -21,8 +24,11 @@ jobs:
       - name: Install dependencies
         run: yarn
 
+      - name: Build source code
+        run: yarn build
+
       - name: Run test suites
         run: yarn test
 
-      - name: Publish to NPM with custom script
-        run: /usr/bin/git status --porcelain | grep '^ M' | awk '{print $2}' | sed -n '/\.[d]\.ts$\|\.js$\|\package.json\|tests\/.*/p' | python3 publish.py
+      - name: Publish to NPM
+        run: yarn publish

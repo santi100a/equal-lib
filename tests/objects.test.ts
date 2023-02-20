@@ -1,4 +1,4 @@
-const objectEquality = require('../index.js').objectEquality;
+const objectEquality = require('../cjs/index.js').objectEquality;
 
 test('it should be a function', () => {
     expect(typeof objectEquality)
