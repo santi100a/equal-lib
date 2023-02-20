@@ -1,5 +1,9 @@
 # Santi's Equality Library
 
+[![Build Status](https://github.com/santi100a/equal-lib/actions/workflows/main.yml/badge.svg)](https://github.com/santi100a/equal-lib/actions)
+[![GitHub stars](https://img.shields.io/github/stars/santi100a/equal-lib.svg)](https://github.com/santi100a/equal-lib)
+[![License](https://img.shields.io/github/license/santi100a/equal-lib.svg)](https://github.com/santi100a/equal-lib)
+
 - 🚀 Lightweight and fast
 - 👴 ES3-compliant*
 - 💻 Portable between the browser and Node.js
