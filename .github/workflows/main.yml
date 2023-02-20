@@ -22,6 +22,9 @@ jobs:
           registry-url: https://registry.npmjs.org
           token: ${{ secrets.NPM_AUTH_TOKEN }}
 
+      - name: Set auth token
+        run: npm set //registry.npmjs.org/_:authToken ${{ secrets.NPM_AUTH_TOKEN }}
+
       - name: Install dependencies
         run: yarn
 
@@ -30,6 +33,7 @@ jobs:
 
       - name: Run test suites
         run: yarn test
+
 
       - name: Publish to NPM
         run: yarn publish
