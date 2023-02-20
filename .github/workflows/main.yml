@@ -23,7 +23,7 @@ jobs:
           token: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: Set auth token
-        run: npm set //registry.npmjs.org/_:authToken ${{ secrets.NPM_AUTH_TOKEN }}
+        run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: Install dependencies
         run: yarn
