@@ -21,7 +21,7 @@ This is a lightweight, fast library for doing [*deep equality*](#what-is-deep-eq
 ## Contribute
 
 Wanna contribute? [File an issue](https://github.com/santi100a/equal-lib/issues) or [pull request](https://github.com/santi100a/equal-lib/pulls)!
-Make sure you follow the [contribution Code of Conduct](https://github.com/santi100a/bisect-lib/blob/main/CODE_OF_CONDUCT.md).
+Make sure you follow the [contribution Code of Conduct](https://github.com/santi100a/equal-lib/blob/main/CODE_OF_CONDUCT.md).
 
 ## Installation
 - Via NPM: `npm install @santi100/equal-lib`
