@@ -55,6 +55,6 @@ a project may be further defined and clarified by me.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting me at [santyrojasprieto9+githubissues@gmail.com](mailto:santyrojasprieto9+githubissues@gmail.com). All complaints will be reviewed and investigated and will result in a response that
+reported by contacting me at <santyrojasprieto9+githubissues@gmail.com>. All complaints will be reviewed and investigated and will result in a response that
 is deemed necessary and appropriate to the circumstances. I will maintain confidentiality with regard to the reporter of an incident.
 Further details of specific enforcement policies may be posted separately.

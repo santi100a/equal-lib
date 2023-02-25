@@ -1,4 +1,4 @@
-const arrayEquality = require('../cjs/index.js').arrayEquality;
+const arrayEquality = require('../cjs').arrayEquality;
 
 test('it should be a function', () => {
     expect(typeof arrayEquality)

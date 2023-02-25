@@ -1,0 +1,20 @@
+on:  
+  pull_request:
+    branches: [ main ]
+    paths:
+      - src/**/*.*
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19.x
+      - name: Install dependencies
+        run: yarn
+      - name: Test code
+        run: yarn test
