@@ -1,4 +1,4 @@
-name: ${{ github.event.repository.name }} Continuous Deployment (CD)
+name: Continuous Deployment (CD)
 on: 
   workflow_call:
     secrets:

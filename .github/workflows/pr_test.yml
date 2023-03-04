@@ -1,4 +1,4 @@
-name: ${{ github.event.repository.name }} Pull Request testing
+name: Pull Request testing
 
 on:  
   pull_request:
@@ -19,5 +19,11 @@ jobs:
           node-version: 19.x
       - name: Install dependencies
         run: yarn
+      - name: Check for modified files 
+        run: |
+         if /usr/bin/git diff --name-only HEAD~ HEAD | grep -qE 'tests/|\.md$'; then
+          echo "Error: You've changed files you're not allowed to!"
+          exit 1
+         fi
       - name: Test code
         run: yarn test
