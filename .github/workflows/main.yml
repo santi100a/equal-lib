@@ -1,4 +1,4 @@
-name: ${{ basename(github.repository) }} Continuous Integration (CI)
+name: ${{ github.event.repository.name }} Continuous Integration (CI)
 
 on:
   push:

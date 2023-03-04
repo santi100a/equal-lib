@@ -1,4 +1,4 @@
-name: ${{ basename github.repository }} Pull Request testing
+name: ${{ github.event.repository.name }} Pull Request testing
 
 on:  
   pull_request:
