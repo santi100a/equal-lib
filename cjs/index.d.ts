@@ -6,7 +6,11 @@ declare function arrayEquality<T>(array1: T[], array2: T[]): boolean;
  * @param {Record<any, any>} obj2 Second object.
  *
  */
-declare function objectEquality<T extends Record<any, any>, _ = unknown>(obj1: T, obj2: Record<any, any>): boolean;
+declare function objectEquality<T extends Record<any, any>, 
+/**
+ * @deprecated Don't specify this anymore, it'll be overridden by `Record<any, any>`.
+ */
+_ = unknown>(obj1: T, obj2: Record<any, any>): boolean;
 /**
  * Deeply compares `param1` and `param2`.
  *

@@ -3,7 +3,7 @@ exports.__esModule = true;
 exports.deepEquality = exports.objectEquality = exports.arrayEquality = void 0;
 function arrayEquality(array1, array2) {
     if (!Array.isArray(array1) || !Array.isArray(array2))
-        throw new TypeError("Parameters must be arrays.");
+        throw new TypeError('Parameters must be arrays.');
     if (array1.length !== array2.length)
         return false;
     for (var i = 0; i < array1.length; i++) {
@@ -13,7 +13,7 @@ function arrayEquality(array1, array2) {
             if (!arrayEquality(item1, item2))
                 return false;
         }
-        else if (typeof item1 === "object" && typeof item2 === "object") {
+        else if (typeof item1 === 'object' && typeof item2 === 'object') {
             if (!objectEquality(item1, item2))
                 return false;
         }
@@ -24,6 +24,9 @@ function arrayEquality(array1, array2) {
     return true;
 }
 exports.arrayEquality = arrayEquality;
+function __isNullOrUndefined(val) {
+    return val === null || val === undefined;
+}
 /**
  * Compares two objects.
  *
@@ -32,14 +35,14 @@ exports.arrayEquality = arrayEquality;
  *
  */
 function objectEquality(obj1, obj2) {
-    if (typeof obj1 !== "object" ||
-        typeof obj2 !== "object" ||
-        obj1 === null ||
-        obj2 === null ||
-        obj1 === undefined ||
-        obj2 === undefined)
-        throw new TypeError("Parameters must be objects.");
+    if (typeof obj1 !== 'object' ||
+        typeof obj2 !== 'object' ||
+        __isNullOrUndefined(obj1) ||
+        __isNullOrUndefined(obj2))
+        throw new TypeError('Parameters must be objects.');
     for (var key in obj1) {
+        if (obj1[key] === obj1)
+            throw new Error('Circular reference detected.');
         if (obj1.hasOwnProperty(key) !== obj2.hasOwnProperty(key)) {
             return false;
         }
@@ -53,7 +56,7 @@ function objectEquality(obj1, obj2) {
             if (!arrayEquality(obj1[key], obj2[key]))
                 return false;
         }
-        else if (typeof obj1[key] === "object" && typeof obj2[key] === "object") {
+        else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
             if (!objectEquality(obj1[key], obj2[key]))
                 return false;
         }
@@ -84,9 +87,10 @@ function deepEquality(param1, param2) {
     if (Array.isArray(param1) && Array.isArray(param2)) {
         return arrayEquality(param1, param2);
     }
-    if (typeof param1 === "object" && typeof param2 === "object") {
+    if (typeof param1 === 'object' && typeof param2 === 'object') {
         return objectEquality(param1, param2);
     }
     return param1 === param2;
 }
 exports.deepEquality = deepEquality;
+// Remember to generate a GitHub PAT and save it as the `GPR_AUTH_TOKEN` secret for this repo before pushing.

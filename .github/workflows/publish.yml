@@ -1,0 +1,39 @@
+name: ${{ basename github.repository }} Continuous Deployment (CD)
+on: 
+  workflow_call:
+    secrets:
+      NPM_AUTH_TOKEN:
+        required: true
+      GPR_AUTH_TOKEN:
+        required: true 
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js and Yarn
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19.x
+          always-auth: true
+
+      - name: Check for existence of jq
+        run: jq --version
+
+      - name: Configure access tokens
+        run: |
+         npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
+         npm set //npm.pkg.github.com/:_authToken ${{ secrets.GPR_AUTH_TOKEN }}
+      - name: Publish to NPM
+        run: |
+         yarn publish --access public
+      
+      - name: Get ready to publish to GPR
+        run: |
+            jq '.name = "@santi100a/equal-lib"' package.json > tmp.json
+            mv tmp.json package.json
+      - name: Publish to GPR
+        run: yarn publish --registry https://npm.pkg.github.com/ --access public

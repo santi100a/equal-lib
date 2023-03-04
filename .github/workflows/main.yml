@@ -1,11 +1,14 @@
-name: equal-lib CI
+name: ${{ basename github.repository }} Continuous Integration (CI)
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main
     paths:
-      - src/*.*
+      - src/**/*.*
       - .github/workflows/main.yml
+      - .github/workflows/publish.yml
+      - '!.github/workflows/pr_test.yml'
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -15,11 +18,6 @@ jobs:
         with:
           node-version: 19.x
           always-auth: true
-          registry-url: https://registry.npmjs.org
-          token: ${{ secrets.NPM_AUTH_TOKEN }}
-
-      - name: Set auth token
-        run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: Install dependencies
         run: yarn
@@ -29,9 +27,8 @@ jobs:
 
       - name: Run test suites
         run: yarn test
-
-
-      - name: Publish to NPM
-        run: yarn publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+  call_publish:
+    uses: ./.github/workflows/publish.yml
+    secrets:
+      NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      GPR_AUTH_TOKEN: ${{ secrets.GPR_AUTH_TOKEN }}
