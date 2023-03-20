@@ -1,0 +1,42 @@
+name: Release Workflow
+
+on:
+  workflow_call:
+    secrets:
+      GH_TOKEN:
+        required: true
+      NPM_AUTH_TOKEN:
+        required: true
+      GPR_AUTH_TOKEN:
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Generate tag, release name, and body
+      run: |
+        TAG_NAME="v$(jq -r '.version' package.json)"
+        RELEASE_NAME="Release $TAG_NAME"
+        BODY=$(sed -n "/## Version $(jq -r '.version' package.json | sed 's/\./\\\./g')/,/##/p" CHANGELOG.md | sed '1d;/^##/d')
+        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+        echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
+        echo "$BODY" >> release.md
+    - name: Create release
+      uses: ncipollo/release-action@v1.12.0
+      with:
+        allowUpdates: true
+        tag: ${{ env.TAG_NAME }}
+        name: ${{ env.RELEASE_NAME }}
+        token: ${{ secrets.GH_TOKEN }}
+        bodyFile: release.md
+        draft: false
+        prerelease: false
+  call-publisher-workflow:
+    needs: release
+    uses: ./.github/workflows/publish.yml
+    secrets:
+      NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      GPR_AUTH_TOKEN: ${{ secrets.GPR_AUTH_TOKEN }}

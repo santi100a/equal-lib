@@ -1,39 +1,53 @@
 name: Continuous Deployment (CD)
-on: 
+
+on:
   workflow_call:
     secrets:
       NPM_AUTH_TOKEN:
         required: true
       GPR_AUTH_TOKEN:
-        required: true 
-
+        required: true
 jobs:
-  publish:
+  publish-npm:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Setup Node.js and Yarn
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 19.x
           always-auth: true
-
-      - name: Check for existence of jq
-        run: jq --version
-
-      - name: Configure access tokens
+      - name: Install dependencies
+        run: yarn
+      - name: Build code
+        run: yarn build
+      - name: Set access tokens
         run: |
-         npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
-         npm set //npm.pkg.github.com/:_authToken ${{ secrets.GPR_AUTH_TOKEN }}
+          npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }} 
       - name: Publish to NPM
+        run: yarn publish --access public
+  publish-gpr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19.x
+          always-auth: true
+      - name: Install dependencies
+        run: yarn
+      - name: Build code
+        run: yarn build
+      - name: Set access tokens
         run: |
-         yarn publish --access public
-      
+          npm set //npm.pkg.github.com/:_authToken ${{ secrets.GPR_AUTH_TOKEN }}
       - name: Get ready to publish to GPR
         run: |
-            jq '.name = "@santi100a/equal-lib"' package.json > tmp.json
-            mv tmp.json package.json
+          jq ".name = \"@$REPO\"" package.json > temp.json && mv temp.json package.json
+        env:
+          REPO: ${{ github.repository }}
       - name: Publish to GPR
-        run: yarn publish --registry https://npm.pkg.github.com/ --access public
+        run: yarn publish --access public --registry https://npm.pkg.github.com/

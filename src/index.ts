@@ -1,109 +1,105 @@
-function arrayEquality<T>(array1: T[], array2: T[]): boolean {
-	if (!Array.isArray(array1) || !Array.isArray(array2))
-		throw new TypeError('Parameters must be arrays.');
+function __isArray(a: any): a is any[] {
+	return Array?.isArray?.(a) || a instanceof Array;
+}
 
-	if (array1.length !== array2.length) return false;
+export function deepEquality(a: any, b: any) {
+	if (__isArray(a) && __isArray(b)) return arrayEquality(a, b);
+	if (__isObject(a) && __isObject(b)) return objectEquality(a, b);
+	return a === b;
+}
 
-	for (let i = 0; i < array1.length; i++) {
-		const item1 = array1[i];
-		const item2 = array2[i];
-
-		if (Array.isArray(item1) && Array.isArray(item2)) {
+function __isNullOrUndefined(a: any): a is void {
+	return a === null || a === undefined;
+}
+function __isObject(a: any): a is Record<any, any> {
+	return typeof a === 'object' && !__isNullOrUndefined(a) && !__isArray(a);
+}
+function __throwCircular(): never {
+	throw new Error('Circular reference detected.');
+}
+export function arrayEquality<T = unknown>(a: T[], b: T[]): boolean {
+	__checkArrayErrors(a, b);
+	if (a.indexOf(a as T) !== -1 || b.indexOf(b as T) !== -1) __throwCircular();
+	if (a === b) return true;
+	if (a.length !== b.length) return false;
+	for (let i = 0; i < a.length; i++) {
+		const item1 = a[i];
+		const item2 = b[i];
+		if (item1 === a || item2 === b) __throwCircular();
+		if (typeof item1 !== typeof item2) return false;
+		if (item1 instanceof Array && item2 instanceof Array) {
 			if (!arrayEquality(item1, item2)) return false;
-		} else if (typeof item1 === 'object' && typeof item2 === 'object') {
-			if (!objectEquality(item1 as Record<any, any>, item2 as Record<any, any>))
+		} else if (
+			typeof item1 === 'object' &&
+			typeof item2 === 'object' &&
+			item1 !== null &&
+			item2 !== null
+		) {
+			if (
+				!objectEquality(item1 as Record<any, any>, item2 as Record<any, any>)
+			) {
 				return false;
+			}
 		} else if (item1 !== item2) {
 			return false;
 		}
 	}
-
 	return true;
 }
-
-function __isNullOrUndefined(val: any): boolean {
-  return val === null || val === undefined;
+function __throwType(name: string, val: any, type: string): never {
+	throw new TypeError(
+		`"${name}" must be ${type}. Got "${val}" of type "${typeof val}".`
+	);
 }
-/**
- * Compares two objects.
- *
- * @param {T} obj1 First object.
- * @param {Record<any, any>} obj2 Second object.
- *
- */
+function __checkArrayErrors(a: any[], b: any[]) {
+	if (!__isArray(a)) __throwType('a', a, 'an Array');
+	if (!__isArray(b)) __throwType('b', b, 'an Array');
+}
+function __checkObjectErrors(obj1: Record<any, any>, obj2: Record<any, any>) {
+	if (!__isObject(obj1)) __throwType('obj1', obj1, 'an Object');
+	if (!__isObject(obj2)) __throwType('obj2', obj2, 'an Object');
+}
+export function objectEquality<
+	T extends Record<any, any>,
+	/**
+	 * @deprecated
+	 */
 
-
-function objectEquality<T extends Record<any, any>,
-/**
- * @deprecated Don't specify this anymore, it'll be overridden by `Record<any, any>`.  
- */ 
-_ = unknown // Unused, for backwards compatibility
->(
-	obj1: T,
-	obj2: Record<any, any>
-): boolean {
-	if (
-		typeof obj1 !== 'object' ||
-		typeof obj2 !== 'object' ||
-		__isNullOrUndefined(obj1) ||
-    __isNullOrUndefined(obj2)
-	)
-		throw new TypeError('Parameters must be objects.');
-
-	for (let key in obj1) {
-		if (obj1[key] === obj1) throw new Error('Circular reference detected.');
-		if (obj1.hasOwnProperty(key) !== obj2.hasOwnProperty(key)) {
-			return false;
-		}
-		if (obj1[key] === obj2[key]) {
-			continue;
-		}
-		if (typeof obj1[key] !== typeof obj2[key]) {
-			return false;
-		}
-		if (Array.isArray(obj1[key]) && Array.isArray(obj2[key])) {
-			if (!arrayEquality(obj1[key], obj2[key])) return false;
-		} else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
-			if (!objectEquality(obj1[key], obj2[key])) return false;
-		} else if (obj1[key] !== obj2[key]) {
-			return false;
-		}
-	}
-
-	for (let key in obj2) {
-		if (!obj1.hasOwnProperty(key)) {
-			return false;
-		}
-	}
-
+	_ = unknown
+>(obj1: T, obj2: Record<any, any>): boolean {
+	__checkObjectErrors(obj1, obj2);
+	if (obj1 === obj2) return true;
+	const keys1 = __keys(obj1),
+		keys2 = __keys(obj2);
+	const values1 = __values(obj1),
+		values2 = __values(obj2);
+	if (values1.indexOf(obj1) !== -1 || values2.indexOf(obj2) !== -1)
+		__throwCircular();
+	if (!arrayEquality(keys1, keys2)) return false;
+	if (!arrayEquality(values1, values2)) return false;
 	return true;
 }
-
-/**
- * Deeply compares `param1` and `param2`.
- *
- * @since 1.0.4
- * @param param1 First value.
- * @param param2 Second value.
- * @returns Whether or not `param1` and `param2` are equal.
- */
-function deepEquality(param1: any, param2: any): boolean {
-	if (typeof param1 !== typeof param2) {
-		return false;
-	}
-
-	if (Array.isArray(param1) && Array.isArray(param2)) {
-		return arrayEquality(param1, param2);
-	}
-
-	if (typeof param1 === 'object' && typeof param2 === 'object') {
-		return objectEquality(
-			param1 as Record<any, any>,
-			param2 as Record<any, any>
-		);
-	}
-
-	return param1 === param2;
+function __keys(obj: Record<string | number | symbol, any>) {
+	return (
+		Object?.keys?.(obj) ||
+		(function () {
+			const k = [];
+			for (const key in obj) {
+				k[k.length] = key;
+			}
+			return k;
+		})()
+	);
 }
-
-export { arrayEquality, objectEquality, deepEquality };
+function __values(obj: Record<string | number | symbol, any>) {
+	return (
+		Object?.values?.(obj) ||
+		(function () {
+			const k = [];
+			for (const key in obj) {
+				k[k.length] = obj[key];
+			}
+			return k;
+		})()
+	);
+}

@@ -1,0 +1,36 @@
+name: Pull Request check
+
+on:
+  pull_request:
+    types:
+      - edited
+      - opened
+    branches: 
+      - main
+    paths:
+      - src/**/*.*
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - name: Clone the main repo
+        run: /usr/bin/git clone https://github.com/${{ github.repository }} main
+      - name: Check if the PR is acceptable
+        run: |
+         diff -q ./tests/ ./main/tests > /dev/null
+         diff -q ./.github/ ./main/.github > /dev/null
+      - name: Copy test suites from main repo to PR
+        run: cp main/tests/*.* tests/ 
+      - name: Install dependencies
+        run: yarn
+      - name: Run main test suites
+        run: yarn test

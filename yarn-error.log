@@ -1,0 +1,54 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Users\Usuario\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js
+
+PATH: 
+  C:\Program Files\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\ProgramData\chocolatey\bin;C:\Program Files\GitHub CLI\;C:\Program Files\Git\cmd;C:\Program Files\Go\bin;C:\Program Files (x86)\platform-tools;C:\Program Files\Steel Bank Common Lisp\;C:\tools\nginx-1.23.2;C:\Program Files\Docker\Docker\resources\bin;C:\Users\Usuario\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\Java\jdk1.8.0_211\bin;C:\Program Files\nodejs\;C:\Users\Usuario\AppData\Local\pnpm;C:\Users\Usuario\AppData\Local\Microsoft\WindowsApps;C:\Users\Usuario\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Usuario\go\bin;C:\Users\Usuario\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\Scripts;c:\users\usuario\appdata\local\packages\pythonsoftwarefoundation.python.3.10_qbz5n2kfra8p0\localcache\local-packages\python310\site-packages;C:\Users\Usuario\.fly\bin;C:\Users\Usuario\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\Usuario\AppData\Roaming\npm
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  19.6.1
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: getaddrinfo ENOTFOUND registry.npmjs.org
+      at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:107:26)
+
+npm manifest: 
+  {
+    "name": "@santi100/equal-lib",
+    "version": "1.0.5",
+    "main": "cjs/index.js",
+    "module": "index.js", 
+    "license": "MIT",
+    "devDependencies": {
+      "@types/jest": "^29.4.0",
+      "jest": "^29.4.3",
+      "typescript": "^4.9.5"
+    },
+    "keywords": [
+      "deep-equality",
+      "array-compare",
+      "object-compare"
+    ],
+    "repository": {
+      "url": "https://github.com/santi100a/equal-lib",
+      "type": "git"
+    },
+    "typings": "./index.d.ts",
+    "scripts": {
+      "test": "jest",
+      "test:watch": "jest --watchAll",
+      "build": "tsc",
+      "dev": "tsc -w"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

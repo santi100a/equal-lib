@@ -4,6 +4,7 @@
     "compilerOptions": {
         "strict": true,
         "declaration": true,
-        "outDir": "cjs/"
+        "outDir": "cjs/",
+        "target": "ES3"
     }
 }
