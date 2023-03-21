@@ -1,9 +1,10 @@
 # Santi's Equality Library
 
-[![Build Status](https://github.com/santi100a/equal-lib/actions/workflows/main.yml/badge.svg)](https://github.com/santi100a/equal-lib/actions)
+[![Build Status](https://github.com/santi100a/equal-lib/actions/workflows/test.yml/badge.svg)](https://github.com/santi100a/equal-lib/actions)
+[![npm homepage](https://img.shields.io/npm/v/@santi100/equal-lib)](https://npmjs.org/package/@santi100/equal-lib)
 [![GitHub stars](https://img.shields.io/github/stars/santi100a/equal-lib.svg)](https://github.com/santi100a/equal-lib)
 [![License](https://img.shields.io/github/license/santi100a/equal-lib.svg)](https://github.com/santi100a/equal-lib)
-
+[![Bundlephobia stats](https://img.shields.io/bundlephobia/min/@santi100/equal-lib)](https://bundlephobia.com/package/@santi100/equal-lib@latest)
 - 🚀 Lightweight and fast^
 - 👴 ES3-compliant*
 - 💻 Portable between the browser and Node.js
