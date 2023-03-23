@@ -4,10 +4,12 @@ on:
 
 jobs:
   welcome:
-    - name: Say hi
-      uses: jungwinter/comment@v1
-      with:
-        type: create
-        token: ${{ secrets.GITHUB_TOKEN }}
-        body: |
-          Hi! Welcome to ${{ github.repository }} issues! Make sure to comply with the [Code of Conduct](https://github.com/${{ github.repository }}/CODE_OF_CONDUCT.md).
+    runs-on: ubuntu-latest
+    steps:
+      - name: Say hi
+        uses: jungwinter/comment@v1
+        with:
+          type: create
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            Hi! Welcome to ${{ github.repository }} issues! Make sure to comply with the [Code of Conduct](https://github.com/${{ github.repository }}/CODE_OF_CONDUCT.md).
