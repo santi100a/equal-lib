@@ -11,5 +11,6 @@ jobs:
         with:
           type: create
           token: ${{ secrets.GITHUB_TOKEN }}
+          issue_number: ${{ github.event.issues.number }}
           body: |
             Hi! Welcome to ${{ github.repository }} issues! Make sure to comply with the [Code of Conduct](https://github.com/${{ github.repository }}/CODE_OF_CONDUCT.md).
