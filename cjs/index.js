@@ -1,18 +1,28 @@
 "use strict";
 exports.__esModule = true;
-exports.objectEquality = exports.arrayEquality = exports.deepEquality = void 0;
-function __isArray(a) {
-    var _a;
-    return ((_a = Array === null || Array === void 0 ? void 0 : Array.isArray) === null || _a === void 0 ? void 0 : _a.call(Array, a)) || a instanceof Array;
+exports.objectEquality = exports.deepEquality = exports.arrayEquality = void 0;
+// START HELPERS //
+function __throwType(name, val, type) {
+    throw new TypeError("\"".concat(name, "\" must be ").concat(type, ". Got \"").concat(val, "\" of type \"").concat(typeof val, "\"."));
 }
-function deepEquality(a, b) {
-    if (__isArray(a) && __isArray(b))
-        return arrayEquality(a, b);
-    if (__isObject(a) && __isObject(b))
-        return objectEquality(a, b);
-    return a === b;
+function __checkArrayErrors(a, b) {
+    if (!__isArray(a))
+        __throwType('a', a, 'an Array');
+    if (!__isArray(b))
+        __throwType('b', b, 'an Array');
+    if (__includes(a, a) || __includes(b, b))
+        __throwCircular();
 }
-exports.deepEquality = deepEquality;
+function __checkObjectErrors(obj1, obj2) {
+    var values1 = __values(obj1);
+    var values2 = __values(obj2);
+    if (!__isObject(obj1))
+        __throwType('obj1', obj1, 'an Object');
+    if (!__isObject(obj2))
+        __throwType('obj2', obj2, 'an Object');
+    if (__includes(values1, obj1) || __includes(values2, obj2))
+        __throwCircular();
+}
 function __isNullOrUndefined(a) {
     return a === null || a === undefined;
 }
@@ -22,67 +32,125 @@ function __isObject(a) {
 function __throwCircular() {
     throw new Error('Circular reference detected.');
 }
-function arrayEquality(a, b) {
+function __includes(arr, item) {
+    return arr.indexOf(item) !== -1;
+}
+function __isArray(a) {
+    var _a;
+    return ((_a = Array === null || Array === void 0 ? void 0 : Array.isArray) === null || _a === void 0 ? void 0 : _a.call(Array, a)) || a instanceof Array;
+}
+/**
+ * Deeply compares two arrays.
+ * @param a An array.
+ * @param b Another array.
+ * @param opts Options, as in {@link EqualityOptions}.
+ * @returns Whether or not `a` and `b` are deeply equal.
+ */
+function arrayEquality(a, b, opts) {
+    if (opts === void 0) { opts = {}; }
     __checkArrayErrors(a, b);
-    if (a.indexOf(a) !== -1 || b.indexOf(b) !== -1)
-        __throwCircular();
     if (a === b)
         return true;
     if (a.length !== b.length)
         return false;
-    for (var i = 0; i < a.length; i++) {
-        var item1 = a[i];
-        var item2 = b[i];
-        if (item1 === a || item2 === b)
+    var stack = [{ a: a, b: b, index: 0 }];
+    while (stack.length > 0) {
+        var _a = stack.pop(), a_1 = _a.a, b_1 = _a.b, index = _a.index;
+        if (index >= a_1.length)
+            continue;
+        var item1 = a_1[index];
+        var item2 = b_1[index];
+        if (item1 === a_1 || item2 === b_1)
             __throwCircular();
         if (typeof item1 !== typeof item2)
             return false;
-        if (item1 instanceof Array && item2 instanceof Array) {
-            if (!arrayEquality(item1, item2))
+        if (__isArray(item1) && __isArray(item2)) {
+            if (item1 === item2)
+                continue;
+            if (item1.length !== item2.length)
                 return false;
+            stack.push({ a: item1, b: item2, index: 0 });
         }
         else if (typeof item1 === 'object' &&
             typeof item2 === 'object' &&
             item1 !== null &&
             item2 !== null) {
-            if (!objectEquality(item1, item2)) {
+            if (item1 === item2)
+                continue;
+            if (__keys(item1).length !== __keys(item2).length)
                 return false;
-            }
+            stack.push({ a: __values(item1), b: __values(item2), index: 0 });
         }
         else if (item1 !== item2) {
             return false;
         }
+        stack.push({ a: a_1, b: b_1, index: index + 1 });
     }
     return true;
 }
 exports.arrayEquality = arrayEquality;
-function __throwType(name, val, type) {
-    throw new TypeError("\"".concat(name, "\" must be ").concat(type, ". Got \"").concat(val, "\" of type \"").concat(typeof val, "\"."));
+/**
+ * Deeply compares any two arbitrary values.
+ * @param a Any value.
+ * @param b Any other value.
+ * @param opts Options, as in {@link EqualityOptions}.
+ * @returns Whether or not `a` and `b` are deeply equal.
+ */
+function deepEquality(a, b, opts) {
+    if (opts === void 0) { opts = {}; }
+    __checkDeepErrors(opts);
+    if (__isArray(a) && __isArray(b))
+        return arrayEquality(a, b);
+    if (__isObject(a) && __isObject(b))
+        return objectEquality(a, b);
+    return !__isNullOrUndefined(opts.epsilon) &&
+        typeof a === 'number' &&
+        typeof b === 'number'
+        ? Math.abs(a - b) < opts.epsilon
+        : a === b;
 }
-function __checkArrayErrors(a, b) {
-    if (!__isArray(a))
-        __throwType('a', a, 'an Array');
-    if (!__isArray(b))
-        __throwType('b', b, 'an Array');
-}
-function __checkObjectErrors(obj1, obj2) {
-    if (!__isObject(obj1))
-        __throwType('obj1', obj1, 'an Object');
-    if (!__isObject(obj2))
-        __throwType('obj2', obj2, 'an Object');
-}
-function objectEquality(obj1, obj2) {
+exports.deepEquality = deepEquality;
+/**
+ * Deeply compares two objects.
+ * @param obj1 An object.
+ * @param obj2 Another object.
+ * @param opts Options, as in {@link EqualityOptions}.
+ * @returns Whether or not `a` and `b` are deeply equal.
+ */
+function objectEquality(obj1, obj2, opts) {
+    if (opts === void 0) { opts = {}; }
     __checkObjectErrors(obj1, obj2);
+    var keys1 = __keys(obj1);
+    var keys2 = __keys(obj2);
+    var values1 = __values(obj1);
+    if (keys1.length !== keys2.length)
+        return false;
     if (obj1 === obj2)
         return true;
-    var keys1 = __keys(obj1), keys2 = __keys(obj2);
-    var values1 = __values(obj1), values2 = __values(obj2);
-    if (values1.indexOf(obj1) !== -1 || values2.indexOf(obj2) !== -1)
-        __throwCircular();
-    if (!arrayEquality(keys1, keys2))
-        return false;
-    if (!arrayEquality(values1, values2))
-        return false;
+    var stack = [{ obj1: obj1, obj2: obj2, index: 0 }];
+    while (stack.length > 0) {
+        var _a = stack[stack.length - 1], obj2_1 = _a.obj2, index = _a.index;
+        if (index >= keys1.length) {
+            stack.pop();
+            continue;
+        }
+        var key = keys1[index];
+        if (!obj2_1.hasOwnProperty(key))
+            return false;
+        var val1 = values1[index];
+        var val2 = obj2_1[key];
+        if (typeof val1 !== typeof val2)
+            return false;
+        if (__isArray(val1) && __isArray(val2))
+            return arrayEquality(val1, val2);
+        else if (__isObject(val1) && __isObject(val2))
+            return objectEquality(val1, val2);
+        else if (!__isNullOrUndefined(opts.epsilon))
+            return Math.abs(val1 - val2) < opts.epsilon;
+        else if (val1 !== val2)
+            return false;
+        stack[stack.length - 1].index++;
+    }
     return true;
 }
 exports.objectEquality = objectEquality;
@@ -107,4 +175,14 @@ function __values(obj) {
             }
             return k;
         })());
+}
+function __checkDeepErrors(_a) {
+    var epsilon = _a.epsilon;
+    __checkEpsilon(epsilon);
+}
+function __checkEpsilon(epsilon) {
+    if (typeof epsilon !== 'number')
+        return;
+    if (epsilon < 0)
+        throw new Error("\"opts.epsilon\", if specified, must be positive or zero. Got \"".concat(epsilon, "\" of type \"").concat(typeof epsilon, "\"."));
 }

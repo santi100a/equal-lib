@@ -5,6 +5,7 @@
         "strict": true,
         "declaration": true,
         "outDir": "cjs/",
-        "target": "ES3"
+        "target": "ES3",
+        "lib": ["es2017"]
     }
 }

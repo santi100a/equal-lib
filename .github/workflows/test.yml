@@ -1,15 +1,14 @@
 name: Continuous Integration (CI)
 
+permissions:
+  packages: write
+
 on:
   push:
     branches: 
       - main
     paths:
       - src/**/*.*
-      - .github/workflows/test.yml
-      - .github/workflows/release.yml
-      - .github/workflows/publish.yml
-      - '!.github/workflows/pr_check.yml'
 
 
 jobs:
@@ -29,11 +28,11 @@ jobs:
         run: yarn build
 
       - name: Run test suites
-        run: yarn test
+        run: yarn test --testPathPattern ./tests
   release:
     needs: test
     uses: ./.github/workflows/release.yml
     secrets: 
       GH_TOKEN: ${{ secrets.GPR_AUTH_TOKEN }}
       NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-      GPR_AUTH_TOKEN: ${{ secrets.GPR_AUTH_TOKEN }}
+      GPR_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

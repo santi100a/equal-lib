@@ -30,10 +30,11 @@ Make sure you follow the [contribution Code of Conduct](https://github.com/santi
 - Via PNPM: `pnpm install @santi100/equal-lib`
 
 ## API
-
-- `function arrayEquality<T>(array1: T[], array2: T[]): boolean;` Compares two arrays. It takes both arrays as arguments, and returns whether or not they are equal. 
-- `function objectEquality<A extends Record<any, any>, B extends Record<any, any>>(obj1: A, obj2: B): boolean;` Compares two objects. It takes both objects as arguments, and returns whether or not they are equal.
-- `function deepEquality(param1: any, param2: any): boolean;` (since 1.0.4) Deeply compares `param1` and `param2`. It takes any two values as arguments, and returns whether or not they are equal. 
+- `interface EqualityOptions;` Options for equality functions.
+    * `epsilon?: number;` An optional epsilon (for increasing floating-point precision).
+- `function arrayEquality<T = unknown>(a: T[], b: T[], opts?: EqualityOptions): boolean;` Compares two arrays. It takes both arrays as arguments, and returns whether or not they are equal. It can also take an optional `EqualityOptions` object as its third argument.
+- `function objectEquality<T extends Record<any, any>>(obj1: A, obj2: Record<any, any>, opts?: EqualityOptions): boolean;` Compares two objects. It takes both objects as arguments, and returns whether or not they are equal. It can also take an optional `EqualityOptions` object as its third argument.
+- `function deepEquality(param1: any, param2: any): boolean;` (since 1.0.4) Deeply compares `param1` and `param2`. It takes any two values as arguments, and returns whether or not they are equal. It can also take an optional `EqualityOptions` object as its third argument.
 
 Keep in mind that since version 1.0.2, this library can compare:
 - Nested arrays or objects

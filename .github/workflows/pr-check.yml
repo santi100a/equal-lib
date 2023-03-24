@@ -26,11 +26,13 @@ jobs:
         run: /usr/bin/git clone https://github.com/${{ github.repository }} main
       - name: Check if the PR is acceptable
         run: |
-         diff -q ./tests/ ./main/tests > /dev/null
-         diff -q ./.github/ ./main/.github > /dev/null
+         diff -q ./tests/ ./main/tests 
+         diff -q ./.github/ ./main/.github
       - name: Copy test suites from main repo to PR
         run: cp main/tests/*.* tests/ 
       - name: Install dependencies
         run: yarn
+      - name: Build code
+        run: yarn build
       - name: Run main test suites
-        run: yarn test
+        run: yarn test --testPathPattern ./main/tests

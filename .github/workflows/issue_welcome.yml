@@ -1,7 +1,10 @@
 name: Welcome message for issues
 on:
-  - issues
-
+  issues:
+    types:
+      - opened
+permissions:
+  issues: write
 jobs:
   welcome:
     runs-on: ubuntu-latest
@@ -13,4 +16,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue_number: ${{ github.event.issues.number }}
           body: |
-            Hi! Welcome to ${{ github.repository }} issues! Make sure to comply with the [Code of Conduct](https://github.com/${{ github.repository }}/CODE_OF_CONDUCT.md).
+            Hi! Welcome to ${{ github.repository }} issues! 
+            Make sure to comply with the 
+            [Code of Conduct](https://github.com/${{ github.repository }}/CODE_OF_CONDUCT.md).
