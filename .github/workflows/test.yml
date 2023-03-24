@@ -35,4 +35,4 @@ jobs:
     secrets: 
       GH_TOKEN: ${{ secrets.GPR_AUTH_TOKEN }}
       NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-      GPR_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GPR_AUTH_TOKEN: ${{ secrets.GPR_AUTH_TOKEN }}
