@@ -6,14 +6,9 @@ on:
 permissions:
   issues: write
 jobs:
-  welcome:
+  welcome-author:
     runs-on: ubuntu-latest
     steps:
-      - name: Output data
-        run: |
-         echo "Issue number: ${{ github.event.issue.number }}"
-         echo "Issue author: ${{ github.event.issue.user.login }}"
-         echo "Current repo: ${{ github.repository }}"
       - name: Say hi
         uses: jungwinter/comment@v1
         with:
@@ -22,5 +17,5 @@ jobs:
           issue_number: ${{ github.event.issue.number }}
           body: |
             Hi, ${{ github.event.issue.user.login }}! Welcome to ${{ github.repository }} issues! 
-            Make sure to comply with the 
-            [Code of Conduct](https://github.com/${{ github.repository }}/CODE_OF_CONDUCT.md).
+            Make sure to comply with the [Code of Conduct](
+            https://github.com/${{ github.repository }}/blob/main/CODE_OF_CONDUCT.md).
