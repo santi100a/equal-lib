@@ -9,6 +9,10 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
+      - name: Output data
+        run: |
+         echo "Issue number: ${{ github.event.issues.number }}"
+         echo "Current repo: ${{ github.repository }}"
       - name: Say hi
         uses: jungwinter/comment@v1
         with:
