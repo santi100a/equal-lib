@@ -5,8 +5,6 @@ on:
     secrets:
       NPM_AUTH_TOKEN:
         required: true
-      GPR_AUTH_TOKEN:
-        required: true
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
@@ -28,6 +26,8 @@ jobs:
       - name: Publish to NPM
         run: yarn publish --access public
   publish-gpr:
+    permissions:
+      packages: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -43,7 +43,7 @@ jobs:
         run: yarn build
       - name: Set access tokens
         run: |
-          npm set //npm.pkg.github.com/:_authToken ${{ secrets.GPR_AUTH_TOKEN }}
+          npm set //npm.pkg.github.com/:_authToken ${{ secrets.GITHUB_TOKEN }}
       - name: Get ready to publish to GPR
         run: |
           jq ".name = \"@$REPO\"" package.json > temp.json && mv temp.json package.json
