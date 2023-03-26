@@ -155,7 +155,7 @@ function __replaceAfterSlash(regex: RegExp): string {
  * @returns Whether or not `a` and `b` are deeply equal.
  */
 export function deepEquality(a: any, b: any, opts: DeepEqualityOptions = {}) {
-	__checkDeepErrors(opts);
+// __checkDeepErrors(opts);
 	const {
 		comparator = DEFAULT_COMPARATOR,
 		compareRegexFlags = false,
