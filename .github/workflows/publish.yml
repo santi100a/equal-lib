@@ -1,10 +1,7 @@
 name: Continuous Deployment (CD)
 
 on:
-  workflow_call:
-    secrets:
-      NPM_AUTH_TOKEN:
-        required: true
+  - release
 jobs:
   publish-npm:
     runs-on: ubuntu-latest

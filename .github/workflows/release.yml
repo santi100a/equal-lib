@@ -8,8 +8,6 @@ on:
 
 jobs:
   release:
-    permissions:
-      contents: write
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -32,8 +30,3 @@ jobs:
         bodyFile: release.md
         draft: false
         prerelease: false
-  call-publisher-workflow:
-    needs: release
-    uses: ./.github/workflows/publish.yml
-    secrets:
-      NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
