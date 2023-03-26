@@ -40,7 +40,6 @@ jobs:
         run: yarn build
       - name: Run main test suites
         run: yarn test 
-        id: test
       - name: Report build failed (if any) 
         if: failure()
         uses: jungwinter/comment@v1
