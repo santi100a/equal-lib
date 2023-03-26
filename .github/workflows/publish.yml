@@ -1,7 +1,11 @@
 name: Continuous Deployment (CD)
 
 on:
-  - release
+  release:
+    types:
+      - published
+      - created
+      - edited
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
