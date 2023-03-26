@@ -6,6 +6,8 @@ on:
 
 jobs:
   say-hi:
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Say hi
@@ -20,4 +22,6 @@ jobs:
             https://github.com/${{ github.repository }}/blob/main/CODE_OF_CONDUCT.md), 
             [security policy](https://github.com/${{ github.repository }}/blob/main/SECURITY.md)
             and [contribution guidelines](https://github.com/${{ github.repository }}/blob/main/CONTRIBUTING.md)
-            before contributing to this repo.
+            before contributing to this repo. 
+
+            This PR will automatically be tested if you've changed the source code.
