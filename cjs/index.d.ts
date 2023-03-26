@@ -2,15 +2,16 @@
  * Options for {@link deepEquality}.
  *
  * @since 1.0.8
-*/
+ */
 export interface DeepEqualityOptions extends EqualityOptions {
     /**
      * Whether or not to compare the flags of a regular expression.
      * Has no effect in case you aren't comparing two regexes.
-    */
+     */
     compareRegexFlags?: boolean;
     /**
-     * A custom comparator function.
+     * A custom comparator function, compatible with the `compareFn` parameter
+     * for {@link Array.prototype.sort}.
      */
     comparator?: CompareFunction;
 }

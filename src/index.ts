@@ -101,7 +101,7 @@ export function arrayEquality<T = unknown>(
 	b: T[],
 	opts: EqualityOptions = {}
 ): boolean {
-//	__checkArrayErrors(a, b);
+	__checkArrayErrors(a, b);
 	if (a === b) return true;
 	if (a.length !== b.length) return false;
 
@@ -137,7 +137,7 @@ export function arrayEquality<T = unknown>(
 		) {
 			return false;
 		}
-		stack.push({ a, b, index: index + 1 });
+		// stack.push({ a, b, index: index + 1 });
 	}
 
 	return true;
