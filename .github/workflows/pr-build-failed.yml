@@ -1,0 +1,20 @@
+name: Report PR build failed
+on:
+  - workflow_call
+jobs:
+  report-pr-build-failed:
+    permissions:
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report the build failed
+        uses: jungwinter/comment@v1
+        with:
+          type: create
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue_number: ${{ github.event.pull_request.number }}
+          body: |
+            Hi, @${{ github.event.pull_request.user.login }}! I'm afraid the CI check for PR 
+            #${{ github.event.pull_request.number }} has failed! 
+            
+            Don't worry, they'll run again if you make a change.
