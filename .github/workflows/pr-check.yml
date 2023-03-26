@@ -31,7 +31,7 @@ jobs:
       - name: Copy test suites from main repo to PR
         run: cp ../main/tests/*.* tests/ 
       - name: Get rid of the main repo's clone
-        run: rm -rf ../main
+        run: sudo rm -rf ../main
       - name: Install dependencies
         run: yarn
       - name: Build code
@@ -40,5 +40,5 @@ jobs:
         run: yarn test 
         id: test
       - name: Report build failed (if any) to build failed workflow
-        uses: ./.github/pr-build-failed.yml
         if: steps.test.outcome == 'failure'
+        uses: ./.github/pr-build-failed.yml
