@@ -40,5 +40,5 @@ jobs:
         run: yarn test 
         id: test
       - name: Report build failed (if any) to build failed workflow
-        if: steps.test.outcome == 'failure'
+        if: failure()
         uses: ./.github/pr-build-failed.yml
