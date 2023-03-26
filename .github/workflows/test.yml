@@ -28,11 +28,9 @@ jobs:
         run: yarn build
 
       - name: Run test suites
-        run: yarn test --testPathPattern ./tests
+        run: yarn test 
   release:
     needs: test
     uses: ./.github/workflows/release.yml
     secrets: 
-      GH_TOKEN: ${{ secrets.GPR_AUTH_TOKEN }}
       NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-      GPR_AUTH_TOKEN: ${{ secrets.GPR_AUTH_TOKEN }}

@@ -32,9 +32,16 @@ Make sure you follow the [contribution Code of Conduct](https://github.com/santi
 ## API
 - `interface EqualityOptions;` Options for equality functions.
     * `epsilon?: number;` An optional epsilon (for increasing floating-point precision).
+- `interface DeepEqualityOptions;` (since 1.0.8) Options for `deepEquality`.
+    * `compareRegexFlags?: boolean;` Whether or not to compare the flags of a regular expression.
+	Has no effect in case you aren't comparing two regexes.
+    * `comparator?: CompareFunction;` A custom comparator function, compatible with the `compareFn` parameter
+    for `Array.prototype.sort`.
 - `function arrayEquality<T = unknown>(a: T[], b: T[], opts?: EqualityOptions): boolean;` Compares two arrays. It takes both arrays as arguments, and returns whether or not they are equal. It can also take an optional `EqualityOptions` object as its third argument.
-- `function objectEquality<T extends Record<any, any>>(obj1: A, obj2: Record<any, any>, opts?: EqualityOptions): boolean;` Compares two objects. It takes both objects as arguments, and returns whether or not they are equal. It can also take an optional `EqualityOptions` object as its third argument.
-- `function deepEquality(param1: any, param2: any): boolean;` (since 1.0.4) Deeply compares `param1` and `param2`. It takes any two values as arguments, and returns whether or not they are equal. It can also take an optional `EqualityOptions` object as its third argument.
+- `function objectEquality<T extends Record<any, any>>(obj1: A, obj2: Record<any, any>, opts?: EqualityOptions): boolean;` 
+Compares two objects. It takes both objects as arguments, and returns whether or not they are equal. It can also take an optional `EqualityOptions` object as its third argument.
+- `function deepEquality(param1: any, param2: any, opts?: DeepEqualityOptions): boolean;` 
+(since 1.0.4) Deeply compares `param1` and `param2`. It takes any two values as arguments, and returns whether or not they are equal. It can also take an optional `DeepEqualityOptions` object as its third argument.
 
 Keep in mind that since version 1.0.2, this library can compare:
 - Nested arrays or objects

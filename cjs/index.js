@@ -39,6 +39,16 @@ function __isArray(a) {
     var _a;
     return ((_a = Array === null || Array === void 0 ? void 0 : Array.isArray) === null || _a === void 0 ? void 0 : _a.call(Array, a)) || a instanceof Array;
 }
+var AE_CACHE = {};
+function DEFAULT_COMPARATOR(a, b) {
+    return typeof a === 'number' && typeof b === 'number' ? a - b : (function () {
+        if (a < b)
+            return -1;
+        if (a > b)
+            return 1;
+        return 0;
+    })();
+}
 /**
  * Deeply compares two arrays.
  * @param a An array.
@@ -81,7 +91,11 @@ function arrayEquality(a, b, opts) {
                 return false;
             stack.push({ a: __values(item1), b: __values(item2), index: 0 });
         }
-        else if (item1 !== item2) {
+        else if (!__isNullOrUndefined(opts.epsilon) &&
+            typeof item1 === 'number' &&
+            typeof item2 === 'number'
+            ? Math.abs(Number(item1) - Number(item2)) >= opts.epsilon
+            : item1 !== item2) {
             return false;
         }
         stack.push({ a: a_1, b: b_1, index: index + 1 });
@@ -89,25 +103,39 @@ function arrayEquality(a, b, opts) {
     return true;
 }
 exports.arrayEquality = arrayEquality;
+function __replaceAfterSlash(regex) {
+    var str = regex.toString();
+    var newStr = str.replace(/\/[dgimsuy]*$/, '/');
+    return newStr;
+}
 /**
  * Deeply compares any two arbitrary values.
  * @param a Any value.
  * @param b Any other value.
- * @param opts Options, as in {@link EqualityOptions}.
+ * @param opts Options, as in {@link DeepEqualityOptions}.
  * @returns Whether or not `a` and `b` are deeply equal.
  */
 function deepEquality(a, b, opts) {
     if (opts === void 0) { opts = {}; }
     __checkDeepErrors(opts);
+    var _a = opts.comparator, comparator = _a === void 0 ? DEFAULT_COMPARATOR : _a, _b = opts.compareRegexFlags, compareRegexFlags = _b === void 0 ? false : _b, epsilon = opts.epsilon;
+    if (a instanceof Date && b instanceof Date)
+        return a.getTime() === b.getTime(); // handle date objects
+    if (a instanceof RegExp && b instanceof RegExp) {
+        var flags1 = a.flags, flags2 = b.flags;
+        return compareRegexFlags
+            ? flags1 === flags2 && __replaceAfterSlash(a) === __replaceAfterSlash(b)
+            : __replaceAfterSlash(a) === __replaceAfterSlash(b);
+    }
     if (__isArray(a) && __isArray(b))
         return arrayEquality(a, b);
     if (__isObject(a) && __isObject(b))
         return objectEquality(a, b);
-    return !__isNullOrUndefined(opts.epsilon) &&
+    return !__isNullOrUndefined(epsilon) &&
         typeof a === 'number' &&
         typeof b === 'number'
-        ? Math.abs(a - b) < opts.epsilon
-        : a === b;
+        ? comparator(Math.abs(a - b), epsilon) < 0
+        : comparator(a, b) === 0;
 }
 exports.deepEquality = deepEquality;
 /**
@@ -181,8 +209,10 @@ function __checkDeepErrors(_a) {
     __checkEpsilon(epsilon);
 }
 function __checkEpsilon(epsilon) {
-    if (typeof epsilon !== 'number')
+    if (__isNullOrUndefined(epsilon))
         return;
+    if (typeof epsilon !== 'number')
+        __throwType('opts.epsilon', epsilon, 'a number');
     if (epsilon < 0)
         throw new Error("\"opts.epsilon\", if specified, must be positive or zero. Got \"".concat(epsilon, "\" of type \"").concat(typeof epsilon, "\"."));
 }

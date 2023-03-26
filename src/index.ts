@@ -32,16 +32,45 @@ function __includes<T = unknown>(arr: T[], item: T) {
 function __isArray(a: any): a is any[] {
 	return Array?.isArray?.(a) || a instanceof Array;
 }
+const createArray = () => [];
+function __generateRandomKey(len = 32) {
+	const letters = '1234567890abcdef'.split('');
+	const keyArray: string[] = createArray();
+	for (let i = 0; i <= len; i++) {
+		keyArray.push(letters[Math.floor(Math.random() * letters.length)]);
+	}
+	return keyArray;
+}
+
 // START TYPES //
+
+/**
+ * Options for {@link deepEquality}.
+ *
+ * @since 1.0.8
+ */
+export interface DeepEqualityOptions extends EqualityOptions {
+	/**
+	 * Whether or not to compare the flags of a regular expression.
+	 * Has no effect in case you aren't comparing two regexes.
+	 */
+	compareRegexFlags?: boolean;
+	/**
+	 * A custom comparator function, compatible with the `compareFn` parameter
+	 * for {@link Array.prototype.sort}.
+	 */
+	comparator?: CompareFunction;
+}
+type CompareFunction = (a: any, b: any) => number;
 /**
  * Options for equality functions.
- * 
+ *
  * @since 1.0.7
  */
 export interface EqualityOptions {
 	/**
 	 * An optional epsilon (for increasing floating-point precision).
-	 * 
+	 *
 	 * @since 1.0.7
 	 */
 	epsilon?: number;
@@ -51,7 +80,15 @@ interface StackItem<T> {
 	obj2: Record<any, any>;
 	index: number;
 }
-
+function DEFAULT_COMPARATOR(a: any, b: any) {
+	return typeof a === 'number' && typeof b === 'number'
+		? a - b
+		: (function () {
+				if (a < b) return -1;
+				if (a > b) return 1;
+				return 0;
+		  })();
+}
 /**
  * Deeply compares two arrays.
  * @param a An array.
@@ -69,7 +106,6 @@ export function arrayEquality<T = unknown>(
 	if (a.length !== b.length) return false;
 
 	const stack: { a: T[]; b: T[]; index: number }[] = [{ a, b, index: 0 }];
-
 	while (stack.length > 0) {
 		const { a, b, index } = stack.pop()!;
 		if (index >= a.length) continue;
@@ -92,31 +128,58 @@ export function arrayEquality<T = unknown>(
 			if (item1 === item2) continue;
 			if (__keys(item1).length !== __keys(item2).length) return false;
 			stack.push({ a: __values(item1), b: __values(item2), index: 0 });
-		} else if (item1 !== item2) {
+		} else if (
+			!__isNullOrUndefined(opts.epsilon) &&
+			typeof item1 === 'number' &&
+			typeof item2 === 'number'
+				? Math.abs(Number(item1) - Number(item2)) >= opts.epsilon
+				: item1 !== item2
+		) {
 			return false;
 		}
-
 		stack.push({ a, b, index: index + 1 });
 	}
 
 	return true;
 }
+function __replaceAfterSlash(regex: RegExp): string {
+	const str = regex.toString();
+	const newStr = str.replace(/\/[dgimsuy]*$/, '/');
+	return newStr;
+}
 /**
- * Deeply compares any two arbitrary values. 
+ * Deeply compares any two arbitrary values.
  * @param a Any value.
  * @param b Any other value.
- * @param opts Options, as in {@link EqualityOptions}.
+ * @param opts Options, as in {@link DeepEqualityOptions}.
  * @returns Whether or not `a` and `b` are deeply equal.
  */
-export function deepEquality(a: any, b: any, opts: EqualityOptions = {}) {
+export function deepEquality(a: any, b: any, opts: DeepEqualityOptions = {}) {
 	__checkDeepErrors(opts);
+	const {
+		comparator = DEFAULT_COMPARATOR,
+		compareRegexFlags = false,
+		epsilon
+	} = opts;
+
+	if (a instanceof Date && b instanceof Date)
+		return a.getTime() === b.getTime(); // handle date objects
+	if (a instanceof RegExp && b instanceof RegExp) {
+		const flags1 = a.flags,
+			flags2 = b.flags;
+		return compareRegexFlags
+			? flags1 === flags2 && __replaceAfterSlash(a) === __replaceAfterSlash(b)
+			: __replaceAfterSlash(a) === __replaceAfterSlash(b);
+	}
 	if (__isArray(a) && __isArray(b)) return arrayEquality(a, b);
 	if (__isObject(a) && __isObject(b)) return objectEquality(a, b);
-	return !__isNullOrUndefined(opts.epsilon) &&
+	const eq =
+		!__isNullOrUndefined(epsilon) &&
 		typeof a === 'number' &&
 		typeof b === 'number'
-		? Math.abs(a - b) < opts.epsilon
-		: a === b;
+			? comparator(Math.abs(a - b), epsilon) < 0
+			: comparator(a, b) === 0;
+	return eq;
 }
 /**
  * Deeply compares two objects.
@@ -192,7 +255,9 @@ function __checkDeepErrors({ epsilon }: EqualityOptions) {
 	__checkEpsilon(epsilon);
 }
 function __checkEpsilon(epsilon: number | undefined) {
-	if (typeof epsilon !== 'number') return;
+	if (__isNullOrUndefined(epsilon)) return;
+	if (typeof epsilon !== 'number')
+		__throwType('opts.epsilon', epsilon, 'a number');
 	if (epsilon < 0)
 		throw new Error(
 			`"opts.epsilon", if specified, must be positive or zero. Got "${epsilon}" of type "${typeof epsilon}".`

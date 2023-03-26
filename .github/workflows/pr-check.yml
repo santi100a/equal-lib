@@ -23,16 +23,18 @@ jobs:
         with:
           node-version: 16.x
       - name: Clone the main repo
-        run: /usr/bin/git clone https://github.com/${{ github.repository }} main
+        run: cd .. && sudo /usr/bin/git clone https://github.com/${{ github.repository }} main && cd - 
       - name: Check if the PR is acceptable
         run: |
-         diff -q ./tests/ ./main/tests 
-         diff -q ./.github/ ./main/.github
+         diff -q ./tests/ ../main/tests 
+         diff -q ./.github/ ../main/.github
       - name: Copy test suites from main repo to PR
-        run: cp main/tests/*.* tests/ 
+        run: cp ../main/tests/*.* tests/ 
+      - name: Get rid of the main repo's clone
+        run: rm -rf ../main
       - name: Install dependencies
         run: yarn
       - name: Build code
         run: yarn build
       - name: Run main test suites
-        run: yarn test --testPathPattern ./main/tests
+        run: yarn test 
