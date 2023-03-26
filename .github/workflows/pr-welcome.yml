@@ -1,12 +1,11 @@
-name: Welcome message for issues
+name: Welcome message for pull requests
 on:
-  issues:
+  pull_request:
     types:
       - opened
-permissions:
-  issues: write
+
 jobs:
-  welcome-author:
+  say-hi:
     runs-on: ubuntu-latest
     steps:
       - name: Say hi
@@ -14,8 +13,9 @@ jobs:
         with:
           type: create
           token: ${{ secrets.GITHUB_TOKEN }}
-          issue_number: ${{ github.event.issue.number }}
+          issue_number: ${{ github.event.pull_request.number }}
           body: |
+            Hi, ${{ github.event.pull_request.user.login }}! Welcome to ${{ github.repository }} issues! 
             Make sure to comply with the [Code of Conduct](
             https://github.com/${{ github.repository }}/blob/main/CODE_OF_CONDUCT.md), 
             [security policy](https://github.com/${{ github.repository }}/blob/main/SECURITY.md)
