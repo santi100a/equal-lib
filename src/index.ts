@@ -100,7 +100,7 @@ export function arrayEquality<T = unknown>(
 	a: T[],
 	b: T[],
 	opts: EqualityOptions = {}
-): boolean {
+): boolean { 
 //  __checkArrayErrors(a, b);
 	if (a === b) return true;
 	if (a.length !== b.length) return false;
