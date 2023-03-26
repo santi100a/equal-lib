@@ -49,3 +49,4 @@ describe('deepEquality', () => {
 		expect(deepEquality(re1, re3, { compareRegexFlags: true })).toBeFalsy();
 	});
 });
+ 

@@ -39,15 +39,26 @@ function __isArray(a) {
     var _a;
     return ((_a = Array === null || Array === void 0 ? void 0 : Array.isArray) === null || _a === void 0 ? void 0 : _a.call(Array, a)) || a instanceof Array;
 }
-var AE_CACHE = {};
+var createArray = function () { return []; };
+function __generateRandomKey(len) {
+    if (len === void 0) { len = 32; }
+    var letters = '1234567890abcdef'.split('');
+    var keyArray = createArray();
+    for (var i = 0; i <= len; i++) {
+        keyArray.push(letters[Math.floor(Math.random() * letters.length)]);
+    }
+    return keyArray;
+}
 function DEFAULT_COMPARATOR(a, b) {
-    return typeof a === 'number' && typeof b === 'number' ? a - b : (function () {
-        if (a < b)
-            return -1;
-        if (a > b)
-            return 1;
-        return 0;
-    })();
+    return typeof a === 'number' && typeof b === 'number'
+        ? a - b
+        : (function () {
+            if (a < b)
+                return -1;
+            if (a > b)
+                return 1;
+            return 0;
+        })();
 }
 /**
  * Deeply compares two arrays.
@@ -131,11 +142,12 @@ function deepEquality(a, b, opts) {
         return arrayEquality(a, b);
     if (__isObject(a) && __isObject(b))
         return objectEquality(a, b);
-    return !__isNullOrUndefined(epsilon) &&
+    var eq = !__isNullOrUndefined(epsilon) &&
         typeof a === 'number' &&
         typeof b === 'number'
         ? comparator(Math.abs(a - b), epsilon) < 0
         : comparator(a, b) === 0;
+    return eq;
 }
 exports.deepEquality = deepEquality;
 /**
