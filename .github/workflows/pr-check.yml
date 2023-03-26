@@ -11,6 +11,8 @@ on:
       - src/**/*.*
 jobs:
   test:
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR
@@ -39,6 +41,15 @@ jobs:
       - name: Run main test suites
         run: yarn test 
         id: test
-      - name: Report build failed (if any) to build failed workflow
+      - name: Report build failed (if any) 
         if: failure()
-        uses: ./.github/pr-build-failed.yml
+        uses: jungwinter/comment@v1
+        with:
+          type: create
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue_number: ${{ github.event.pull_request.number }}
+          body: |
+            Hi, @${{ github.event.pull_request.user.login }}! I'm afraid the CI check for PR 
+            #${{ github.event.pull_request.number }} has failed! 
+            
+            Don't worry, they'll run again if you make a change.
