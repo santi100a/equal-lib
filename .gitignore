@@ -2,3 +2,4 @@
 node_modules
 **/ignore-*.*
 *.exe
+yarn-error.log
