@@ -1,7 +1,6 @@
 name: Continuous Integration (CI)
 
-permissions:
-  contents: write
+
 
 on:
   push:
@@ -29,6 +28,8 @@ jobs:
       - name: Run test suites
         run: yarn test
   release:
+    permissions:
+      contents: write
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -52,3 +53,50 @@ jobs:
           bodyFile: release.md
           draft: false
           prerelease: false
+  publish-npm:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19.x
+          always-auth: true
+      - name: Install dependencies
+        run: yarn
+      - name: Build code
+        run: yarn build
+      - name: Set access tokens
+        run: |
+          npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }} 
+      - name: Publish to NPM
+        run: yarn publish --access public
+  publish-gpr:
+    needs: release
+    permissions:
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19.x
+          always-auth: true
+      - name: Install dependencies
+        run: yarn
+      - name: Build code
+        run: yarn build
+      - name: Set access tokens
+        run: |
+          npm set //npm.pkg.github.com/:_authToken ${{ secrets.GITHUB_TOKEN }}
+      - name: Get ready to publish to GPR
+        run: |
+          jq ".name = \"@$REPO\"" package.json > temp.json && mv temp.json package.json
+        env:
+          REPO: ${{ github.repository }}
+      - name: Publish to GPR
+        run: yarn publish --access public --registry https://npm.pkg.github.com/

@@ -3,7 +3,7 @@ function __throwType(name: string, val: any, type: string): never {
 	throw new TypeError(
 		`"${name}" must be ${type}. Got "${val}" of type "${typeof val}".`
 	);
-}
+} 
 function __checkArrayErrors(a: any[], b: any[]) {
 	if (!__isArray(a)) __throwType('a', a, 'an Array');
 	if (!__isArray(b)) __throwType('b', b, 'an Array');
