@@ -92,7 +92,7 @@ jobs:
         run: yarn build
       - name: Set access tokens
         run: |
-          npm set //npm.pkg.github.com/:_authToken ${{ secrets.GITHUB_TOKEN }}
+          npm set //npm.pkg.github.com/:_authToken ${{ secrets.GPR_AUTH_TOKEN }}
       - name: Get ready to publish to GPR
         run: |
           jq ".name = \"@$REPO\"" package.json > temp.json && mv temp.json package.json
