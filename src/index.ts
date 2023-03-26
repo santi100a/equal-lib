@@ -8,7 +8,7 @@ function __checkArrayErrors(a: any[], b: any[]) {
 	if (!__isArray(a)) __throwType('a', a, 'an Array');
 	if (!__isArray(b)) __throwType('b', b, 'an Array');
 	if (__includes(a, a as any) || __includes(b, b as any)) __throwCircular();
-}
+} 
 function __checkObjectErrors(obj1: Record<any, any>, obj2: Record<any, any>) {
 	const values1 = __values(obj1);
 	const values2 = __values(obj2);
