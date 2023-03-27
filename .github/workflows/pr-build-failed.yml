@@ -18,3 +18,9 @@ jobs:
             #${{ github.event.pull_request.number }} has failed! 
             
             Don't worry, they'll run again if you make a change.
+      - name: Label PR as "CI failed"
+        uses: actions/labeler
+        with: 
+          sync-label: true
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          
