@@ -5,8 +5,7 @@ on:
     types:
       - edited
       - opened
-    branches: 
-      - main
+      - synchronize
     paths:
       - src/**/*.*
 jobs:
