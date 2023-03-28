@@ -24,13 +24,13 @@ jobs:
         with:
           node-version: 16.x
       - name: Clone the main repo
-        run: cd .. && sudo /usr/bin/git clone https://github.com/${{ github.repository }} main && cd - 
+        run: cd .. && sudo /usr/bin/git clone https://github.com/${{ github.repository }} main && cd -
       - name: Check if the PR is acceptable
         run: |
-         diff -q ./tests/ ../main/tests 
-         diff -q ./.github/ ../main/.github
+          diff -q ./tests/ ../main/tests 
+          diff -q ./.github/ ../main/.github
       - name: Copy test suites from main repo to PR
-        run: cp ../main/tests/*.* tests/ 
+        run: cp ../main/tests/*.* tests/
       - name: Get rid of the main repo's clone
         run: sudo rm -rf ../main
       - name: Install dependencies
@@ -38,7 +38,10 @@ jobs:
       - name: Build code
         run: yarn build
       - name: Run main test suites
-        run: yarn test 
-      - name: Report build failed (if any) 
+        run: yarn test
+      - name: Report build failed (if any)
         if: failure()
         uses: ./.github/workflows/pr-build-failed.yml
+        with:
+          pr-author: ${{ github.event.pull_request.user.login }}
+          number: ${{ github.event.pull_request.number }}
