@@ -41,13 +41,4 @@ jobs:
         run: yarn test 
       - name: Report build failed (if any) 
         if: failure()
-        uses: jungwinter/comment@v1
-        with:
-          type: create
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue_number: ${{ github.event.pull_request.number }}
-          body: |
-            Hi, @${{ github.event.pull_request.user.login }}! I'm afraid the CI check for PR 
-            #${{ github.event.pull_request.number }} has failed! 
-            
-            Don't worry, they'll run again if you make a change.
+        uses: ./.github/workflows/pr-build-failed.yml

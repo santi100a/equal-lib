@@ -14,13 +14,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue_number: ${{ github.event.pull_request.number }}
           body: |
-            Hi, @${{ github.event.pull_request.user.login }}! I'm afraid the CI check for PR 
-            #${{ github.event.pull_request.number }} has failed! 
+            Hi, @${{ github.event.pull_request.user.login }}! I'm afraid the CI check for PR #${{ github.event.pull_request.number }} has failed! 
             
-            Don't worry, they'll run again if you make a change.
+            Don't worry, it'll run again if you commit any changes to the PR.
       - name: Label PR as "CI failed"
         uses: actions/labeler
         with: 
           sync-label: true
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          
