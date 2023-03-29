@@ -6,6 +6,8 @@ on:
 
 jobs:
   say-hi:
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Say hi
