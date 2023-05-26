@@ -6,6 +6,7 @@ on:
 
 jobs:
   say-hi:
+    continue-on-error: true
     permissions:
       pull-requests: write
     runs-on: ubuntu-latest
@@ -17,7 +18,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue_number: ${{ github.event.pull_request.number }}
           body: |
-            Hi, ${{ github.event.pull_request.user.login }}! Welcome to ${{ github.repository }} issues! 
+            Hi, ${{ github.event.pull_request.user.login }}! Welcome to ${{ github.repository }} PRs! 
             Make sure to comply with the [Code of Conduct](
             https://github.com/${{ github.repository }}/blob/main/CODE_OF_CONDUCT.md), [security policy](
             https://github.com/${{ github.repository }}/blob/main/SECURITY.md) and [contribution guidelines

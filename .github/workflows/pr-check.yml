@@ -24,21 +24,44 @@ jobs:
         with:
           node-version: 16.x
       - name: Clone the main repo
-        run: cd .. && sudo /usr/bin/git clone https://github.com/${{ github.repository }} main && cd -
-      - name: Check if the PR is acceptable
         run: |
-          diff -q ./tests/ ../main/tests 
-          diff -q ./.github/ ../main/.github
-      - name: Copy test suites from main repo to PR
-        run: cp ../main/tests/*.* tests/
+         cd .. 
+         sudo /usr/bin/git clone https://github.com/${{ github.repository }} main 
+         (cd -) > /dev/null
+
+      - name: Pre-run modified files validation
+        run: |
+         sudo chmod +x scripts/validate-diff.sh 
+         scripts/validate-diff.sh .github ../main/.github
+         scripts/validate-diff.sh LICENSE ../main/LICENSE
+         scripts/validate-diff.sh .gitignore ../main/.gitignore
+         scripts/validate-diff.sh .prettierrc ../main/.prettierrc
+         scripts/validate-diff.sh .eslintrc.json ../main/.eslintrc.json
+         scripts/validate-diff.sh tsconfig.json ../main/tsconfig.json
+         scripts/validate-diff.sh SECURITY.md ../main/SECURITY.md
+         scripts/validate-diff.sh CONTRIBUTING.md ../main/CONTRIBUTING.md
+         scripts/validate-diff.sh CODE_OF_CONDUCT.md ../main/CODE_OF_CONDUCT.md
+
       - name: Get rid of the main repo's clone
         run: sudo rm -rf ../main
       - name: Install dependencies
         run: yarn
+
+      - name: Validate package.json
+        run: yarn validate-package-json
+      
+      - name: Validate Markdown links
+        run: yarn check-links
+
+      - name: Run ESLint
+        run: yarn lint
+        
       - name: Build code
         run: yarn build
+      
       - name: Run main test suites
         run: yarn test
+
       - name: Report build failed (if any)
         if: failure()
         uses: ./.github/workflows/pr-build-failed.yml

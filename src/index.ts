@@ -1,15 +1,15 @@
 // START HELPERS //
-function __throwType(name: string, val: any, type: string): never {
+function __throwType(name: string, val: unknown, type: string): never {
 	throw new TypeError(
 		`"${name}" must be ${type}. Got "${val}" of type "${typeof val}".`
 	);
-} 
-function __checkArrayErrors(a: any[], b: any[]) {
+}
+function __checkArrayErrors(a: unknown[], b: unknown[]) {
 	if (!__isArray(a)) __throwType('a', a, 'an Array');
 	if (!__isArray(b)) __throwType('b', b, 'an Array');
-	if (__includes(a, a as any) || __includes(b, b as any)) __throwCircular();
+	if (__includes(a, a as unknown) || __includes(b, b as unknown)) __throwCircular();
 }
-function __checkObjectErrors(obj1: Record<any, any>, obj2: Record<any, any>) {
+function __checkObjectErrors(obj1: Record<PropertyKey, unknown>, obj2: Record<PropertyKey, unknown>) {
 	const values1 = __values(obj1);
 	const values2 = __values(obj2);
 
@@ -17,10 +17,10 @@ function __checkObjectErrors(obj1: Record<any, any>, obj2: Record<any, any>) {
 	if (!__isObject(obj2)) __throwType('obj2', obj2, 'an Object');
 	if (__includes(values1, obj1) || __includes(values2, obj2)) __throwCircular();
 }
-function __isNullOrUndefined(a: any): a is void {
+function __isNullOrUndefined(a: unknown): a is void {
 	return a === null || a === undefined;
 }
-function __isObject(a: any): a is Record<any, any> {
+function __isObject(a: unknown): a is Record<PropertyKey, unknown> {
 	return typeof a === 'object' && !__isNullOrUndefined(a) && !__isArray(a);
 }
 function __throwCircular(): never {
@@ -29,18 +29,10 @@ function __throwCircular(): never {
 function __includes<T = unknown>(arr: T[], item: T) {
 	return arr.indexOf(item) !== -1;
 }
-function __isArray(a: any): a is any[] {
+function __isArray(a: unknown): a is unknown[] {
 	return Array?.isArray?.(a) || a instanceof Array;
 }
-const createArray = () => [];
-function __generateRandomKey(len = 32) {
-	const letters = '1234567890abcdef'.split('');
-	const keyArray: string[] = createArray();
-	for (let i = 0; i <= len; i++) {
-		keyArray.push(letters[Math.floor(Math.random() * letters.length)]);
-	}
-	return keyArray;
-}
+
 
 // START TYPES //
 
@@ -61,7 +53,7 @@ export interface DeepEqualityOptions extends EqualityOptions {
 	 */
 	comparator?: CompareFunction;
 }
-type CompareFunction = (a: any, b: any) => number;
+type CompareFunction = (a: unknown, b: unknown) => number;
 /**
  * Options for equality functions.
  *
@@ -77,17 +69,19 @@ export interface EqualityOptions {
 }
 interface StackItem<T> {
 	obj1: T;
-	obj2: Record<any, any>;
+	obj2: Record<PropertyKey, unknown>;
 	index: number;
 }
-function DEFAULT_COMPARATOR(a: any, b: any) {
+function DEFAULT_COMPARATOR(a: unknown, b: unknown) {
 	return typeof a === 'number' && typeof b === 'number'
 		? a - b
 		: (function () {
+				// @ts-expect-error a and b are unknown.
 				if (a < b) return -1;
+				// @ts-expect-error a and b are unknown.
 				if (a > b) return 1;
 				return 0;
-		  })();
+		})();
 }
 /**
  * Deeply compares two arrays.
@@ -107,7 +101,11 @@ export function arrayEquality<T = unknown>(
 
 	const stack: { a: T[]; b: T[]; index: number }[] = [{ a, b, index: 0 }];
 	while (stack.length > 0) {
-		const { a, b, index } = stack.pop()!;
+		const { a, b, index } = stack.pop() as NonNullable<{
+			a: T[];
+			b: T[];
+			index: number;
+		}>;
 		if (index >= a.length) continue;
 
 		const item1 = a[index];
@@ -118,6 +116,7 @@ export function arrayEquality<T = unknown>(
 		if (__isArray(item1) && __isArray(item2)) {
 			if (item1 === item2) continue;
 			if (item1.length !== item2.length) return false;
+			// @ts-expect-error Typing error
 			stack.push({ a: item1, b: item2, index: 0 });
 		} else if (
 			typeof item1 === 'object' &&
@@ -126,7 +125,9 @@ export function arrayEquality<T = unknown>(
 			item2 !== null
 		) {
 			if (item1 === item2) continue;
+			// @ts-expect-error A typing error.
 			if (__keys(item1).length !== __keys(item2).length) return false;
+			// @ts-expect-error A typing error.
 			stack.push({ a: __values(item1), b: __values(item2), index: 0 });
 		} else if (
 			!__isNullOrUndefined(opts.epsilon) &&
@@ -154,12 +155,16 @@ function __replaceAfterSlash(regex: RegExp): string {
  * @param opts Options, as in {@link DeepEqualityOptions}.
  * @returns Whether or not `a` and `b` are deeply equal.
  */
-export function deepEquality(a: any, b: any, opts: DeepEqualityOptions = {}) {
+export function deepEquality(
+	a: unknown,
+	b: unknown,
+	opts: DeepEqualityOptions = {}
+) {
 	__checkDeepErrors(opts);
 	const {
 		comparator = DEFAULT_COMPARATOR,
 		compareRegexFlags = false,
-		epsilon
+		epsilon,
 	} = opts;
 
 	if (a instanceof Date && b instanceof Date)
@@ -188,9 +193,13 @@ export function deepEquality(a: any, b: any, opts: DeepEqualityOptions = {}) {
  * @param opts Options, as in {@link EqualityOptions}.
  * @returns Whether or not `a` and `b` are deeply equal.
  */
-export function objectEquality<T extends Record<any, any>, _ = unknown>(
+export function objectEquality<
+	T extends Record<PropertyKey, unknown>,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	_ = unknown
+>(
 	obj1: T,
-	obj2: Record<any, any>,
+	obj2: Record<PropertyKey, unknown>,
 	opts: EqualityOptions = {}
 ): boolean {
 	__checkObjectErrors(obj1, obj2);
@@ -210,7 +219,7 @@ export function objectEquality<T extends Record<any, any>, _ = unknown>(
 		}
 
 		const key = keys1[index];
-		if (!obj2.hasOwnProperty(key)) return false;
+		if (obj2[key] === undefined) return false;
 		const val1 = values1[index];
 		const val2 = obj2[key];
 		if (typeof val1 !== typeof val2) return false;
@@ -218,6 +227,7 @@ export function objectEquality<T extends Record<any, any>, _ = unknown>(
 		else if (__isObject(val1) && __isObject(val2))
 			return objectEquality(val1, val2);
 		else if (!__isNullOrUndefined(opts.epsilon))
+			// @ts-expect-error val1 and val2 are unknown.
 			return Math.abs(val1 - val2) < opts.epsilon;
 		else if (val1 !== val2) return false;
 
@@ -227,7 +237,7 @@ export function objectEquality<T extends Record<any, any>, _ = unknown>(
 	return true;
 }
 
-function __keys(obj: Record<string | number | symbol, any>) {
+function __keys(obj: Record<PropertyKey, unknown>) {
 	return (
 		Object?.keys?.(obj) ||
 		(function () {
@@ -239,7 +249,7 @@ function __keys(obj: Record<string | number | symbol, any>) {
 		})()
 	);
 }
-function __values(obj: Record<string | number | symbol, any>) {
+function __values(obj: Record<PropertyKey, unknown>) {
 	return (
 		Object?.values?.(obj) ||
 		(function () {

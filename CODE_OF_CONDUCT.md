@@ -1,12 +1,12 @@
-# Code of Conduct
+# Contributor Covenant Code of Conduct
 
 ## My Pledge
 
 In the interest of fostering an open and welcoming environment, as
 the maintainer, I pledge to make participation in my project and
 our community a harassment-free experience for everyone, regardless of age, body
-size, disability, ethnicity, level of experience, education, 
-socio-economic status, nationality, personal appearance, race, 
+size, disability, ethnicity, level of experience, education,
+socio-economic status, nationality, personal appearance, race,
 or religion.
 
 ## My Standards
@@ -40,7 +40,7 @@ response to any instances of unacceptable behavior.
 I have the right and responsibility to remove, edit, or
 reject comments, commits, code, wiki edits, issues, and other contributions
 that are not aligned to this Code of Conduct, or to ban temporarily or
-permanently any contributor for other behaviors that I deem inappropriate,
+permanently any contributor for other behaviors that they deem inappropriate,
 threatening, offensive, or harmful.
 
 ## Scope
@@ -55,9 +55,12 @@ a project may be further defined and clarified by me.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting me at <santyrojasprieto9+githubissues@gmail.com>. All complaints will be reviewed and investigated and will result in a response that
-is deemed necessary and appropriate to the circumstances. I will maintain confidentiality with regard to the reporter of an incident.
-Further details of specific enforcement policies may be posted separately.
+reported to me at [maintainer contact method].
+All complaints will be reviewed and investigated promptly and fairly.
+
+I'm obligated to respect the privacy and security of the
+reporter of any incident.
+
 ## Enforcement Guidelines
 
 I will follow these Community Impact Guidelines in determining
@@ -68,7 +71,7 @@ the consequences for any action I deem in violation of this Code of Conduct:
 **Community Impact**: Use of inappropriate language or other behavior deemed
 unprofessional or unwelcome in the community.
 
-**Consequence**: A private, written warning from me, providing
+**Consequence**: A private, written warning from community leaders, providing
 clarity around the nature of the violation and an explanation of why the
 behavior was inappropriate. A public apology may be requested.
 
@@ -110,11 +113,11 @@ This Code of Conduct is adapted from the [Contributor Covenant][homepage],
 version 2.0, available at
 <https://www.contributor-covenant.org/version/2/0/code_of_conduct.html>.
 
-Community Impact Guidelines were inspired by 
+Community Impact Guidelines were inspired by
 [Mozilla's code of conduct enforcement ladder][Mozilla CoC].
 
 For answers to common questions about this code of conduct, see the FAQ at
-<https://www.contributor-covenant.org/faq>. Translations are available 
+<https://www.contributor-covenant.org/faq>. Translations are available
 at <https://www.contributor-covenant.org/translations>.
 
 [homepage]: https://www.contributor-covenant.org

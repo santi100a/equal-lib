@@ -1,6 +1,6 @@
 {
+    "bracketSameLine": true,
+    "semi": true,
     "singleQuote": true,
-    "useTabs": true,
-    "trailingComma": "none",
-    "semi": true
+    "useTabs": true
 }

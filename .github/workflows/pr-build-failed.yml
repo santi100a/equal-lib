@@ -10,6 +10,7 @@ on:
         type: string
 jobs:
   report-pr-build-failed:
+    continue-on-error: true
     permissions:
       pull-requests: write
     runs-on: ubuntu-latest
@@ -25,7 +26,6 @@ jobs:
             Don't worry, it'll run again if you commit any changes to this PR.
       - name: Label PR as "CI failed"
         uses: actions/labeler@v4
-        with: 
+        with:
           sync-label: true
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          
