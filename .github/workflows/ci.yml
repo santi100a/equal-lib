@@ -18,7 +18,6 @@ jobs:
           always-auth: true
 
       - name: Check commit message
-        id: commit
         run: |
           COMMIT_MSG=$(/usr/bin/git log --format=%B -n 1 HEAD)
           STRING=$(echo $COMMIT_MSG | (grep -E "infra:|docs:|lint:|code-style:" || echo ''))
@@ -32,6 +31,7 @@ jobs:
            echo "rel=0" >> $GITHUB_OUTPUT
            echo "IS_RELEASE_COMMIT=0" >> $GITHUB_ENV
           fi
+          cat $GITHUB_OUTPUT
 
       - name: Install dependencies
         run: yarn
@@ -51,10 +51,10 @@ jobs:
       - name: Run test suites
         run: yarn test
   release:
+    needs: test
     if: needs.test.outputs.rel != '0'
     permissions:
       contents: write
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
