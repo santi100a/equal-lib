@@ -171,7 +171,6 @@ export function deepEquality(
 	if (a === b) return true;
 	if (a === null && b !== null) return false;
 	if (a !== null && b === null) return false; 
-
 	if (a instanceof Date && b instanceof Date)
 		return a.getTime() === b.getTime(); // handle date objects
 	if (a instanceof RegExp && b instanceof RegExp) {

@@ -43,18 +43,15 @@ jobs:
         run: yarn validate-package-json
 
       - name: Run ESLint
-        if: env.IS_RELEASE_COMMIT == '1'
         run: yarn lint
 
       - name: Build source code
-        if: env.IS_RELEASE_COMMIT == '1'
         run: yarn build
 
       - name: Run test suites
-        if: env.IS_RELEASE_COMMIT == '1'
         run: yarn test
   release:
-    if: needs.test.outputs.IS_RELEASE_COMMIT == '1'
+    if: needs.test.outputs.IS_RELEASE_COMMIT == 1 || needs.test.outputs.IS_RELEASE_COMMIT == '1'
     permissions:
       contents: write
     needs: test
