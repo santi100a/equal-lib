@@ -24,12 +24,12 @@ jobs:
           STRING=$(echo $COMMIT_MSG | (grep -E "infra:|docs:|lint:|code-style:" || echo ''))
 
           if [ -z "$STRING" ]; then
-           echo "IS_RELEASE_COMMIT=1" >> $GITHUB_OUTPUT
+           echo "rel=1" >> $GITHUB_OUTPUT
            echo "IS_RELEASE_COMMIT=1" >> $GITHUB_ENV
           else 
            echo "This commit will NOT trigger a release."
 
-           echo "IS_RELEASE_COMMIT=0" >> $GITHUB_OUTPUT
+           echo "rel=0" >> $GITHUB_OUTPUT
            echo "IS_RELEASE_COMMIT=0" >> $GITHUB_ENV
           fi
 
@@ -51,7 +51,7 @@ jobs:
       - name: Run test suites
         run: yarn test
   release:
-    if: needs.test.outputs.IS_RELEASE_COMMIT != '0'
+    if: needs.test.outputs.rel != '0'
     permissions:
       contents: write
     needs: test
