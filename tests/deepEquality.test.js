@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const deepEquality = require('../cjs').deepEquality;
 
 describe('deepEquality', () => {
@@ -35,6 +36,20 @@ describe('deepEquality', () => {
 		expect(
 			deepEquality({ name: 'John', age: 30 }, { name: 'Jane', age: 30 })
 		).toBeFalsy();
+	});
+	test('returns false for primitives and objects', () => {
+		expect(deepEquality(5, { foo: 'bar' })).toBeFalsy();
+		expect(deepEquality('not an object', { foo: 'bar' })).toBeFalsy();
+		expect(deepEquality(true, { foo: 'bar' })).toBeFalsy();
+		expect(deepEquality(false, { foo: 'bar' })).toBeFalsy();
+		expect(deepEquality(null, { foo: 'bar' })).toBeFalsy(); // special case
+		expect(deepEquality(undefined, { foo: 'bar' })).toBeFalsy();
+		expect(deepEquality(/=+/, { foo: 'bar' })).toBeFalsy();
+		expect(deepEquality(Symbol('water'), { foo: 'bar' })).toBeFalsy();
+		
+	});
+	test('returns false for primitives and arrays', () => {
+		expect(deepEquality(5, ['foo', 'bar', 'baz'])).toBeFalsy();
 	});
 	test('it can equate regular expressions', () => {
 		const re1 = /hello world/;

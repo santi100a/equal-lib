@@ -39,22 +39,14 @@ function __isArray(a) {
     var _a;
     return ((_a = Array === null || Array === void 0 ? void 0 : Array.isArray) === null || _a === void 0 ? void 0 : _a.call(Array, a)) || a instanceof Array;
 }
-var createArray = function () { return []; };
-function __generateRandomKey(len) {
-    if (len === void 0) { len = 32; }
-    var letters = '1234567890abcdef'.split('');
-    var keyArray = createArray();
-    for (var i = 0; i <= len; i++) {
-        keyArray.push(letters[Math.floor(Math.random() * letters.length)]);
-    }
-    return keyArray;
-}
 function DEFAULT_COMPARATOR(a, b) {
     return typeof a === 'number' && typeof b === 'number'
         ? a - b
         : (function () {
+            // @ts-expect-error a and b are unknown.
             if (a < b)
                 return -1;
+            // @ts-expect-error a and b are unknown.
             if (a > b)
                 return 1;
             return 0;
@@ -90,6 +82,7 @@ function arrayEquality(a, b, opts) {
                 continue;
             if (item1.length !== item2.length)
                 return false;
+            // @ts-expect-error Typing error
             stack.push({ a: item1, b: item2, index: 0 });
         }
         else if (typeof item1 === 'object' &&
@@ -98,8 +91,10 @@ function arrayEquality(a, b, opts) {
             item2 !== null) {
             if (item1 === item2)
                 continue;
+            // @ts-expect-error A typing error.
             if (__keys(item1).length !== __keys(item2).length)
                 return false;
+            // @ts-expect-error A typing error.
             stack.push({ a: __values(item1), b: __values(item2), index: 0 });
         }
         else if (!__isNullOrUndefined(opts.epsilon) &&
@@ -130,6 +125,14 @@ function deepEquality(a, b, opts) {
     if (opts === void 0) { opts = {}; }
     __checkDeepErrors(opts);
     var _a = opts.comparator, comparator = _a === void 0 ? DEFAULT_COMPARATOR : _a, _b = opts.compareRegexFlags, compareRegexFlags = _b === void 0 ? false : _b, epsilon = opts.epsilon;
+    if (typeof a !== typeof b)
+        return false;
+    if (a === b)
+        return true;
+    if (a === null && b !== null)
+        return false;
+    if (a !== null && b === null)
+        return false;
     if (a instanceof Date && b instanceof Date)
         return a.getTime() === b.getTime(); // handle date objects
     if (a instanceof RegExp && b instanceof RegExp) {
@@ -175,7 +178,7 @@ function objectEquality(obj1, obj2, opts) {
             continue;
         }
         var key = keys1[index];
-        if (!obj2_1.hasOwnProperty(key))
+        if (obj2_1[key] === undefined)
             return false;
         var val1 = values1[index];
         var val2 = obj2_1[key];
@@ -186,6 +189,7 @@ function objectEquality(obj1, obj2, opts) {
         else if (__isObject(val1) && __isObject(val2))
             return objectEquality(val1, val2);
         else if (!__isNullOrUndefined(opts.epsilon))
+            // @ts-expect-error val1 and val2 are unknown.
             return Math.abs(val1 - val2) < opts.epsilon;
         else if (val1 !== val2)
             return false;

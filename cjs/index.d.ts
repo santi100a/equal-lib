@@ -15,7 +15,7 @@ export interface DeepEqualityOptions extends EqualityOptions {
      */
     comparator?: CompareFunction;
 }
-declare type CompareFunction = (a: any, b: any) => number;
+type CompareFunction = (a: unknown, b: unknown) => number;
 /**
  * Options for equality functions.
  *
@@ -44,7 +44,7 @@ export declare function arrayEquality<T = unknown>(a: T[], b: T[], opts?: Equali
  * @param opts Options, as in {@link DeepEqualityOptions}.
  * @returns Whether or not `a` and `b` are deeply equal.
  */
-export declare function deepEquality(a: any, b: any, opts?: DeepEqualityOptions): boolean;
+export declare function deepEquality(a: unknown, b: unknown, opts?: DeepEqualityOptions): boolean;
 /**
  * Deeply compares two objects.
  * @param obj1 An object.
@@ -52,5 +52,5 @@ export declare function deepEquality(a: any, b: any, opts?: DeepEqualityOptions)
  * @param opts Options, as in {@link EqualityOptions}.
  * @returns Whether or not `a` and `b` are deeply equal.
  */
-export declare function objectEquality<T extends Record<any, any>, _ = unknown>(obj1: T, obj2: Record<any, any>, opts?: EqualityOptions): boolean;
+export declare function objectEquality<T extends Record<PropertyKey, unknown>, _ = unknown>(obj1: T, obj2: Record<PropertyKey, unknown>, opts?: EqualityOptions): boolean;
 export {};

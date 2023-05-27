@@ -1,6 +1,6 @@
 {
   "name": "@santi100/equal-lib",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "main": "cjs/index.js",
   "typings": "cjs/index.d.ts",
   "module": "index.mjs",
